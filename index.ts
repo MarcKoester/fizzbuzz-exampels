@@ -1,4 +1,4 @@
-import { interval, take, map, tap } from 'rxjs';
+import { interval, take, map, tap, filter, count } from 'rxjs';
 
 const solutions = [
   { key: 'standard', fn: standard },
@@ -70,7 +70,7 @@ function rxjsPipeOperators() {
   const picker = map(([index, value]: [number, string]) => value || index);
 
   interval()
-    .pipe(take(21), starter, buzzer, fizzer, picker)
+    .pipe(take(21), starter, fizzer, buzzer, picker)
     .subscribe(console.log);
 }
 
@@ -81,16 +81,18 @@ function rxjsPipeOperatorsFactory() {
       value + (index % modulo === 0 ? name : ''),
     ]);
 
-  const starter = map((index: number) => [index, '']);
-  const picker = map(([index, value]: [number, string]) => value || index);
+  const init = map((index: number) => [index, '']);
+  const pick = map(
+    ([index, value]: [number, string]) => value || index.toString()
+  );
 
   interval()
     .pipe(
-      take(21),
-      starter,
+      take(25),
+      init,
       fizzBuzzFactory('Fizz', 3),
       fizzBuzzFactory('Buzz', 5),
-      picker
+      pick
     )
     .subscribe(console.log);
 }
