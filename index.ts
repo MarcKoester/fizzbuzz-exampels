@@ -8,6 +8,7 @@ import {
   startWith,
   fromEvent,
   exhaustMap,
+  of,
 } from 'rxjs';
 
 const solutions = [
@@ -15,6 +16,7 @@ const solutions = [
   { key: 'standardBetter', fn: standardBetter },
   { key: 'standardBetterWithoutModulo', fn: standardBetterWithoutModulo },
   { key: 'rxjs', fn: rxjs },
+  { key: 'rxjsFast', fn: rxjsFast },
   { key: 'rxjsIfLess', fn: rxjsIfLess },
   { key: 'rxjsPipeOperators', fn: rxjsPipeOperators },
   { key: 'rxjsPipeOperatorsFactory', fn: rxjsPipeOperatorsFactory },
@@ -33,7 +35,7 @@ solutions.forEach((solution) => {
 });
 
 function standard() {
-  for (let i = 0; i <= 21; i++) {
+  for (let i = 0; i <= 100; i++) {
     if (i % 3 === 0 && i % 5 === 0) {
       console.log('FizzBuzz');
     } else if (i % 3 === 0) {
@@ -76,6 +78,19 @@ function rxjs() {
   interval()
     .pipe(
       take(21),
+      map((num) => {
+        if (num % 3 === 0 && num % 5 === 0) return 'FizzBuzz';
+        else if (num % 3 === 0) return 'Fizz';
+        else if (num % 5 === 0) return 'Buzz';
+        return num;
+      })
+    )
+    .subscribe(console.log);
+}
+function rxjsFast() {
+  of(...Array.from({ length: 100 }, (v, i) => i))
+    .pipe(
+      take(100),
       map((num) => {
         if (num % 3 === 0 && num % 5 === 0) return 'FizzBuzz';
         else if (num % 3 === 0) return 'Fizz';
