@@ -1,7 +1,8 @@
-import { interval, take, map, tap, filter, count } from 'rxjs';
+import { interval, take, map, tap, filter, count, startWith } from 'rxjs';
 
 const solutions = [
   { key: 'standard', fn: standard },
+  { key: 'standardBetter', fn: standardBetter },
   { key: 'rxjs', fn: rxjs },
   { key: 'rxjsIfLess', fn: rxjsIfLess },
   { key: 'rxjsPipeOperators', fn: rxjsPipeOperators },
@@ -26,6 +27,19 @@ function standard() {
     } else {
       console.log(i);
     }
+  }
+}
+
+function standardBetter() {
+  for (let i = 0; i <= 21; i++) {
+    let value = '';
+    if (i % 3 === 0) {
+      value += 'Fizz';
+    }
+    if (i % 5 === 0) {
+      value += 'Buzz';
+    }
+    console.log(value || i);
   }
 }
 
@@ -88,7 +102,7 @@ function rxjsPipeOperatorsFactory() {
 
   interval()
     .pipe(
-      take(25),
+      take(21),
       init,
       fizzBuzzFactory('Fizz', 3),
       fizzBuzzFactory('Buzz', 5),
@@ -96,3 +110,10 @@ function rxjsPipeOperatorsFactory() {
     )
     .subscribe(console.log);
 }
+
+// 0 -> 0 -> [0, ''] -> [0, 'Fizz'] -> [0, 'FizzBuzz'] -> 'FizzBuzz'
+// 1 -> 1 -> [1, ''] -> [1, ''] -> [1, ''] -> '1'
+// 2 -> 2 -> [2, ''] -> [2, ''] -> [2, ''] -> '2'
+// 3 -> 3 -> [3, ''] -> [3, 'Fizz'] -> [2, 'Fizz'] -> 'Fizz'
+// 4 -> 4 -> [4, ''] -> [4, ''] -> [4, ''] -> '4'
+// 5 -> 5 -> [5, ''] -> [5, ''] -> [5, 'Buzz'] -> 'Buzz'
