@@ -13,6 +13,7 @@ import {
 const solutions = [
   { key: 'standard', fn: standard },
   { key: 'standardBetter', fn: standardBetter },
+  { key: 'standardBetterWithoutModulo', fn: standardBetterWithoutModulo },
   { key: 'rxjs', fn: rxjs },
   { key: 'rxjsIfLess', fn: rxjsIfLess },
   { key: 'rxjsPipeOperators', fn: rxjsPipeOperators },
@@ -24,9 +25,9 @@ solutions.forEach((solution) => {
   var button = document.createElement('BUTTON');
   button.textContent = solution.key;
   if (solution.asObservalble) {
-    solution.fn(button);
+    solution.fn(button as any);
   } else {
-    button.addEventListener('click', solution.fn);
+    button.addEventListener('click', solution.fn as any);
   }
   document.getElementById('button-container').appendChild(button);
 });
@@ -52,6 +53,19 @@ function standardBetter() {
       value += 'Fizz';
     }
     if (i % 5 === 0) {
+      value += 'Buzz';
+    }
+    console.log(value || i);
+  }
+}
+
+function standardBetterWithoutModulo() {
+  for (let i = 0; i <= 21; i++) {
+    let value = '';
+    if (!(i / 3).toString().split('.')[1]) {
+      value += 'Fizz';
+    }
+    if (!(i / 5).toString().split('.')[1]) {
       value += 'Buzz';
     }
     console.log(value || i);
@@ -153,7 +167,6 @@ function rxjsSingleRun(button: HTMLButtonElement) {
     )
     .subscribe(console.log);
 }
-
 
 // 0 -> 0 -> [0, ''] -> [0, 'Fizz'] -> [0, 'FizzBuzz'] -> 'FizzBuzz'
 // 1 -> 1 -> [1, ''] -> [1, ''] -> [1, ''] -> '1'
