@@ -1,4 +1,14 @@
-import { interval, take, map, tap, filter, count, startWith } from 'rxjs';
+import {
+  interval,
+  take,
+  map,
+  tap,
+  filter,
+  count,
+  startWith,
+  fromEvent,
+  exhaustMap,
+} from 'rxjs';
 
 const solutions = [
   { key: 'standard', fn: standard },
@@ -7,12 +17,17 @@ const solutions = [
   { key: 'rxjsIfLess', fn: rxjsIfLess },
   { key: 'rxjsPipeOperators', fn: rxjsPipeOperators },
   { key: 'rxjsPipeOperatorsFactory', fn: rxjsPipeOperatorsFactory },
+  { key: 'rxjsSingleRun', fn: rxjsSingleRun, asObservalble: true },
 ];
 
 solutions.forEach((solution) => {
   var button = document.createElement('BUTTON');
   button.textContent = solution.key;
-  button.addEventListener('click', solution.fn);
+  if (solution.asObservalble) {
+    solution.fn(button);
+  } else {
+    button.addEventListener('click', solution.fn);
+  }
   document.getElementById('button-container').appendChild(button);
 });
 
@@ -102,7 +117,7 @@ function rxjsPipeOperatorsFactory() {
 
   interval()
     .pipe(
-      take(21),
+      take(100),
       init,
       fizzBuzzFactory('Fizz', 3),
       fizzBuzzFactory('Buzz', 5),
@@ -110,6 +125,35 @@ function rxjsPipeOperatorsFactory() {
     )
     .subscribe(console.log);
 }
+
+function rxjsSingleRun(button: HTMLButtonElement) {
+  const fizzBuzzFactory = (name: string, modulo: number) =>
+    map(([index, value]: [number, string]) => [
+      index,
+      value + (index % modulo === 0 ? name : ''),
+    ]);
+  const init = map((index: number) => [index, '']);
+  const pick = map(
+    ([index, value]: [number, string]) => value || index.toString()
+  );
+
+  const source$ = fromEvent(button, 'click');
+
+  source$
+    .pipe(
+      exhaustMap(() =>
+        interval().pipe(
+          take(100),
+          init,
+          fizzBuzzFactory('Fizz', 3),
+          fizzBuzzFactory('Buzz', 5),
+          pick
+        )
+      )
+    )
+    .subscribe(console.log);
+}
+
 
 // 0 -> 0 -> [0, ''] -> [0, 'Fizz'] -> [0, 'FizzBuzz'] -> 'FizzBuzz'
 // 1 -> 1 -> [1, ''] -> [1, ''] -> [1, ''] -> '1'
