@@ -21,6 +21,7 @@ const solutions = [
   { key: 'rxjsPipeOperators', fn: rxjsPipeOperators },
   { key: 'rxjsPipeOperatorsFactory', fn: rxjsPipeOperatorsFactory },
   { key: 'rxjsSingleRun', fn: rxjsSingleRun, asObservalble: true },
+  { key: 'tryCatch', fn: tryCatch },
 ];
 
 solutions.forEach((solution) => {
@@ -181,6 +182,26 @@ function rxjsSingleRun(button: HTMLButtonElement) {
       )
     )
     .subscribe(console.log);
+}
+
+function tryCatch() {
+  for (let i = 0; i <= 21; i++) {
+    let value = '';
+    try {
+      const byThree = 5 / (i % 3);
+      if (byThree === Infinity) throw new Error('Divided by 0');
+    } catch (e) {
+      value += 'Fizz';
+    }
+
+    try {
+      const byFive = 5 / (i % 5);
+      if (byFive === Infinity) throw new Error('Divided by 0');
+    } catch (e) {
+      value += 'Buzz';
+    }
+    console.log(value || i);
+  }
 }
 
 // 0 -> 0 -> [0, ''] -> [0, 'Fizz'] -> [0, 'FizzBuzz'] -> 'FizzBuzz'
